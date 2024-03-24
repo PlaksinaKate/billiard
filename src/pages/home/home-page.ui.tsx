@@ -1,12 +1,14 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useScreenSize } from "../../shared/hooks/useScreenSize";
 import { CircleCoords } from "./home-page.model";
+import { ColorPicker } from "../../shared/ui/ColorPicker";
 
 export const HomePage = () => {
   const screenSize = useScreenSize();
   const ref = useRef<HTMLCanvasElement>(null);
   const { width, height } = screenSize;
   const circles: CircleCoords[] = [];
+  const [color, setColor] = useState<string>('');
 
   const tableSize = {
     width: width - 100,
@@ -28,7 +30,14 @@ export const HomePage = () => {
 
     for (let i = 1; i <= 16; i++) {
       const { x, y, radius } = getRandomCoordsCircle(xEnd, yEnd);
-      const color = "rgb(" + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + ")";
+      const color =
+        "rgb(" +
+        Math.round(Math.random() * 255) +
+        "," +
+        Math.round(Math.random() * 255) +
+        "," +
+        Math.round(Math.random() * 255) +
+        ")";
       drawCircle(context, x, y, radius, color);
     }
   };
@@ -95,5 +104,16 @@ export const HomePage = () => {
     }
   });
 
-  return <canvas ref={ref} />;
+  const onClickCanvas = (event: { clientX: any; clientY: any }) => {
+    if (checkCollision(event.clientX, event.clientY, 0)) {
+      
+    }
+  };
+
+  return (
+    <>
+      <canvas ref={ref} onClick={onClickCanvas} />
+      <ColorPicker setColor={setColor} />
+    </>
+  );
 };
