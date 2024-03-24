@@ -1,14 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useScreenSize } from "../../shared/hooks/useScreenSize";
 import { CircleCoords } from "./home-page.model";
 import { ColorPicker } from "../../shared/ui/ColorPicker";
 
-export const HomePage = () => {
+export const HomePage = memo(() => {
   const screenSize = useScreenSize();
   const ref = useRef<HTMLCanvasElement>(null);
   const { width, height } = screenSize;
   const circles: CircleCoords[] = [];
-  const [color, setColor] = useState<string>('');
+  const [color, setColor] = useState<string>("");
+  let [showColorPicker, setShowColorPicker] = useState<boolean>(false);
+  const [clickedCircle, setClickedCircle] = useState<CircleCoords>({
+    x: 0,
+    y: 0,
+    radius: 0,
+  });
 
   const tableSize = {
     width: width - 100,
@@ -30,14 +36,7 @@ export const HomePage = () => {
 
     for (let i = 1; i <= 16; i++) {
       const { x, y, radius } = getRandomCoordsCircle(xEnd, yEnd);
-      const color =
-        "rgb(" +
-        Math.round(Math.random() * 255) +
-        "," +
-        Math.round(Math.random() * 255) +
-        "," +
-        Math.round(Math.random() * 255) +
-        ")";
+      const color = "rgb(" + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + ")";
       drawCircle(context, x, y, radius, color);
     }
   };
@@ -64,8 +63,8 @@ export const HomePage = () => {
     xArc: number,
     yArc: number,
     radiusArc: number
-  ): boolean => {
-    return circles.some((circle) => {
+  ): CircleCoords | undefined => {
+    return circles.find((circle) => {
       const { x, y, radius } = circle;
       if (
         Math.abs((x - xArc) * (x - xArc) + (y - yArc) * (y - yArc)) <
@@ -102,18 +101,33 @@ export const HomePage = () => {
         drawCircles(context);
       }
     }
-  });
+  }, []);
 
-  const onClickCanvas = (event: { clientX: any; clientY: any }) => {
-    if (checkCollision(event.clientX, event.clientY, 0)) {
-      
+  const onClickCanvas = (event: { clientX: number; clientY: number }) => {
+    console.log('event', event)
+    const circle = checkCollision(event.clientX, event.clientY, 0);
+    console.log('circle', circle);
+    console.log('circles', circles);
+
+    if (circle) {
+      setClickedCircle(circle);
+      setShowColorPicker(true);
     }
   };
+
+  useEffect(() => {
+    const canvas = ref.current;
+    const context = canvas?.getContext("2d");
+    const { x, y, radius } = clickedCircle;
+    if (context) {
+      drawCircle(context, x, y, radius, color);
+    }
+  }, [color]);
 
   return (
     <>
       <canvas ref={ref} onClick={onClickCanvas} />
-      <ColorPicker setColor={setColor} />
+      {showColorPicker && <ColorPicker setColor={setColor} />}
     </>
   );
-};
+});

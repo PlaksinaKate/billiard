@@ -75,9 +75,7 @@ export function ColorPicker({setColor}: IColorPicker) {
     const contextBlock = canvasBlockEl?.getContext("2d");
     if(canvasBlockEl && contextBlock) {
       const imageData = contextBlock.getImageData(x, y, 1, 1).data;
-      rgbaColor =
-        "rgba(" + imageData[0] + "," + imageData[1] + "," + imageData[2] + ",1)";
-      console.log(rgbaColor)
+      rgbaColor = "rgba(" + imageData[0] + "," + imageData[1] + "," + imageData[2] + ",1)";
     }
     
   }
