@@ -7,7 +7,7 @@ export const HomePage = memo(() => {
   const screenSize = useScreenSize();
   const ref = useRef<HTMLCanvasElement>(null);
   const { width, height } = screenSize;
-  const circles: CircleCoords[] = [];
+  let [circles] = useState<CircleCoords[]>([]);
   const [color, setColor] = useState<string>("");
   let [showColorPicker, setShowColorPicker] = useState<boolean>(false);
   const [clickedCircle, setClickedCircle] = useState<CircleCoords>({
@@ -104,12 +104,10 @@ export const HomePage = memo(() => {
   }, []);
 
   const onClickCanvas = (event: { clientX: number; clientY: number }) => {
-    console.log('event', event)
     const circle = checkCollision(event.clientX, event.clientY, 0);
-    console.log('circle', circle);
-    console.log('circles', circles);
 
     if (circle) {
+      circles = circles.filter(c => c !== circle)
       setClickedCircle(circle);
       setShowColorPicker(true);
     }
