@@ -5,7 +5,7 @@ import { BallCoords } from "./balls.model";
 const drawBalls = (
   context: CanvasRenderingContext2D,
   tableSize: ITableSize,
-  balls: BallCoords[],
+  balls: BallCoords[]
 ) => {
   const { width, height, x, y } = tableSize;
   const xEnd = x + width - 140;
@@ -20,7 +20,7 @@ const drawBalls = (
     );
     const color = getRandomColor();
     balls.push({ id: i, x, y, dx, dy, radius, color });
-    drawBall(context, x, y, radius, color,);
+    drawBall(context, x, y, radius, color);
   }
 };
 
@@ -29,7 +29,7 @@ const getRandomCoordsBall = (
   yEnd: number,
   tableSize: ITableSize,
   balls: BallCoords[]
-): Omit<BallCoords, "color" | 'id'> => {
+): Omit<BallCoords, "color" | "id"> => {
   const { x, y } = tableSize;
 
   const xArc: number = Math.floor(Math.random() * (xEnd - x) + x + 70);
@@ -71,13 +71,13 @@ const drawBall = (
   x: number,
   y: number,
   radius: number,
-  color: string,
+  color: string
 ) => {
   context.beginPath();
   context.fillStyle = color;
   context.beginPath();
   context.arc(x, y, radius, 0, 2 * Math.PI);
-  context.fill()
+  context.fill();
   context.closePath();
 };
 
@@ -98,11 +98,11 @@ const update = (
   ball.x += ball.dx;
   ball.y += ball.dy;
 
-  if (ball.x + ball.radius > tableSize.width || ball.x - ball.radius < 50) {
+  if ( ball.x + ball.radius > tableSize.width - 10 || ball.x - ball.radius < 50) {
     ball.dx = -ball.dx / 1.5;
   }
 
-  if (ball.y + ball.radius > tableSize.height || ball.y - ball.radius < 60) {
+  if (ball.y + ball.radius > tableSize.height - 10 || ball.y - ball.radius < 60) {
     ball.dy = -ball.dy / 1.5;
   }
 
@@ -117,7 +117,7 @@ function animate(
   if (ctx) {
     requestAnimationFrame(() => animate(tableSize, ctx, balls));
     ctx.clearRect(0, 0, tableSize.width, tableSize.height);
-    billiardTable.drawBilliardTable(ctx, tableSize)
+    billiardTable.drawBilliardTable(ctx, tableSize);
 
     balls.forEach((ball) => {
       update(ball, ctx, tableSize);
